@@ -27,9 +27,9 @@ router.get(`/notes/:id`, (req, res, next) => {
   knex(`notes`)
     .select(`id`, `title`, `content`)
     .where(`id`, id)
-    .limit(1)
-    .then(results => {
-      if (results[0]) res.json(results[0])
+    .first()
+    .then(result => {
+      if (result) res.json(result)
       else next()
     })
     .catch(next)
