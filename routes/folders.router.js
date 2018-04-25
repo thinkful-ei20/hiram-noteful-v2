@@ -1,7 +1,7 @@
 const express = require(`express`)
 const knex = require(`../knex`)
 
-const router = express.router()
+const router = express.Router()
 
 router.get(`/`, (req, res, next) => {
   // get all folders
