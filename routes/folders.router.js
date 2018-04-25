@@ -48,9 +48,8 @@ router.put(`/:id`, (req, res, next) => {
   knex(`folders`)
     .update(updateObj, [`id`, `name`])
     .where(`id`, id)
-    .first()
-    .then(result => {
-      if (result) res.json(result)
+    .then(results => {
+      if (results[0]) res.json(results[0])
       else next()
     })
     .catch(next)
@@ -70,13 +69,12 @@ router.post(`/`, (req, res, next) => {
 
   knex(`folders`)
     .insert(newItem, [`id`, `name`])
-    .first()
-    .then(result => {
-      if (result) {
+    .then(results => {
+      if (results[0]) {
         res
-          .location(`http://${req.headers.host}/api/folders/${result.id}`)
+          .location(`http://${req.headers.host}/api/folders/${results[0].id}`)
           .status(201)
-          .json(result)
+          .json(results[0])
       }
     })
 })
