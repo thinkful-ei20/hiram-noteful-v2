@@ -8,12 +8,22 @@ const router = express.Router()
 
 // Get All (and search by query)
 router.get(`/notes`, (req, res, next) => {
-  const { searchTerm } = req.query
+  const { searchTerm, folderId } = req.query
 
   knex(`notes`)
-    .select(`id`, `title`, `content`)
+    .select(
+      `notes.id`,
+      `title`,
+      `content`,
+      `folders.id as folder_id`,
+      `folders.name as folderName`
+    )
+    .leftJoin(`folders`, `notes.folder_id`, `folders.id`)
     .modify(queryBuilder => {
       if (searchTerm) queryBuilder.where(`title`, `LIKE`, `%${searchTerm}%`)
+    })
+    .modify(queryBuilder => {
+      if (folderId) queryBuilder.where(`folder_id`, folderId)
     })
     .orderBy(`id`)
     .then(results => res.json(results))
@@ -25,8 +35,15 @@ router.get(`/notes/:id`, (req, res, next) => {
   const id = req.params.id
 
   knex(`notes`)
-    .select(`id`, `title`, `content`)
-    .where(`id`, id)
+    .select(
+      `notes.id`,
+      `title`,
+      `content`,
+      `folders.id as folderId`,
+      `folders.name as folderName`
+    )
+    .leftJoin(`folders`, `notes.folder_id`, `folders.id`)
+    .where(`notes.id`, id)
     .first()
     .then(result => {
       if (result) res.json(result)
@@ -41,7 +58,7 @@ router.put(`/notes/:id`, (req, res, next) => {
 
   /***** Never trust users - validate input *****/
   const updateObj = {}
-  const updateableFields = [`title`, `content`]
+  const updateableFields = [`title`, `content`, `folder_id`]
 
   updateableFields.forEach(field => {
     if (field in req.body) {
@@ -57,10 +74,22 @@ router.put(`/notes/:id`, (req, res, next) => {
   }
 
   knex(`notes`)
-    .update(updateObj, [`id`, `title`, `content`])
+    .update(updateObj)
     .where(`id`, id)
-    .then(result => {
-      if (result[0]) res.json(result[0])
+    .then(() => {
+      knex(`notes`)
+        .select(
+          `notes.id`,
+          `title`,
+          `content`,
+          `folder_id`,
+          `folders.name as folder_name`
+        )
+        .leftJoin(`folders`, `notes.folder_id`, `folders.id`)
+        .where(`notes.id`, id)
+    })
+    .then(([result]) => {
+      if (result) res.json(result)
       else next()
     })
     .catch(next)
@@ -68,25 +97,37 @@ router.put(`/notes/:id`, (req, res, next) => {
 
 // Post (insert) an item
 router.post(`/notes`, (req, res, next) => {
-  const { title, content } = req.body
+  const { title, content, folder_id } = req.body
 
-  const newItem = { title, content }
+  const newItem = { title, content, folder_id }
   /***** Never trust users - validate input *****/
   if (!newItem.title) {
     const err = new Error(`Missing \`title\` in request body`)
     err.status = 400
     return next(err)
   }
+  let noteId
 
   knex(`notes`)
-    .insert(newItem, [`id`, `title`, `content`])
-    .then(results => {
-      if (results[0])
-        res
-          .location(`http://${req.headers.host}/api/notes/${results[0].id}`)
-          .status(201)
-          .json(results[0])
-      else next()
+    .insert(newItem, [`id`])
+    .then(([id]) => {
+      noteId = id
+      return knex(`notes`)
+        .select(
+          `notes.id`,
+          `title`,
+          `content`,
+          `folder_id`,
+          `folders.name as folder_name`
+        )
+        .leftJoin(`folders`, `notes.folder_id`, `folders.id`)
+        .where(`notes.id`, noteId)
+    })
+    .then(([result]) => {
+      res
+        .location(`${req.originalUrl}/${result.id}`)
+        .status(201)
+        .json(result)
     })
     .catch(next)
 })
