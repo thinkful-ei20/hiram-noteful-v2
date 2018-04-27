@@ -13,10 +13,6 @@ describe(`Notes endpoints`, function() {
     return seedData(join(__dirname, `..`, `db`, `setup.pgsql`))
   })
 
-  after(function() {
-    return knex.destroy() // destroy the connection
-  })
-
   describe(`GET /api/notes`, function() {
     it(`should return all notes`, function() {
       let count
@@ -229,7 +225,7 @@ describe(`Notes endpoints`, function() {
             .where(`id`, 10005)
         })
         .then(results => {
-          expect(results).to.have.lengthOf(0)
+          expect(results).to.have.length(0)
         })
     })
   })

@@ -40,7 +40,7 @@ router.put(`/:id`, (req, res, next) => {
   })
 
   if (!updateObj.name) {
-    const err = new Error(`Missing name in request body`)
+    const err = new Error(`Missing \`name\` in request body`)
     err.status = 400
     return next(err)
   }
@@ -62,7 +62,7 @@ router.post(`/`, (req, res, next) => {
   const newItem = { name }
 
   if (!newItem.name) {
-    const err = new Error(`Missing name in request body`)
+    const err = new Error(`Missing \`name\` in request body`)
     err.status = 400
     return next(err)
   }
