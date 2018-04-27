@@ -162,20 +162,27 @@ describe(`Notes endpoints`, function() {
       const updateItem = {
         title: `What about dogs?!`,
         content: `woof woof`,
+        tags: [],
       }
+      let body
       return chai
         .request(app)
         .put(`/api/notes/10005`)
         .send(updateItem)
-        .then(function(res) {
+        .then(res => {
+          body = res.body
           expect(res).to.have.status(200)
           expect(res).to.be.json
           expect(res.body).to.be.a(`object`)
-          expect(res.body).to.include.keys(`id`, `title`, `content`)
-
-          expect(res.body.id).to.equal(10005)
-          expect(res.body.title).to.equal(updateItem.title)
-          expect(res.body.content).to.equal(updateItem.content)
+          expect(res.body).to.include.keys(`id`, `title`, `content`, `tags`)
+          return knex(`notes`)
+            .select()
+            .where(`id`, 10005)
+        })
+        .then(([data]) => {
+          expect(body.title).to.eq(updateItem.title)
+          expect(body.content).to.eq(updateItem.content)
+          expect(body.tags).to.deep.eq(updateItem.tags)
         })
     })
 
