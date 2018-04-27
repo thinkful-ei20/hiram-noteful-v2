@@ -1,7 +1,7 @@
+drop table if EXISTS notes_tags;
 drop table if EXISTS notes;
 drop table if EXISTS folders;
 drop table if EXISTS tags;
-drop table if EXISTS notes_tags;
 
 create table folders (
   id serial PRIMARY KEY,
@@ -36,10 +36,17 @@ insert into folders (name) VALUES
   ('Personal'),
   ('Work');
 
-insert into notes (title, content, folder_id) VALUES ('bookish', 'hot', 1001);
-insert into notes (title, content, folder_id) VALUES ('glasses', 'hotter', 1002);
-insert into notes (title, content, folder_id) VALUES ('tall', 'hotter still', 1000);
-insert into notes (title, content, folder_id) VALUES ('ginger', 'on fire', 1001);
+insert into notes (title, content, folder_id) VALUES
+  ('bookish', 'hot', 1001),
+  ('glasses', 'hotter', 1002),
+  ('tall', 'hotter still', 1000),
+  ('tall6', 'hotter still', 1003),
+  ('tall5', 'hotter still', 1002),
+  ('tall4', 'hotter still', 1001),
+  ('tall1', 'hotter still', 1002),
+  ('tall3', 'hotter still', 1003),
+  ('tall2', 'hotter still', 1003),
+  ('ginger', 'on fire', 1001);
 
 insert into tags (name) VALUES
   ('shopping'),

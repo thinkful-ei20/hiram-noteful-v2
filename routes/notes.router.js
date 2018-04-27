@@ -57,7 +57,7 @@ router.get(`/:id`, (req, res, next) => {
     .leftJoin(`tags`, `tag_id`, `tags.id`)
     .where(`notes.id`, id)
     .then(results => {
-      if (results) res.json(hydrateNotes(results))
+      if (results[0]) res.json(hydrateNotes(results)[0])
       else next()
     })
     .catch(next)
@@ -120,7 +120,7 @@ router.put(`/:id`, (req, res, next) => {
         .where(`notes.id`, id)
     })
     .then(results => {
-      if (results[0]) res.json(hydrateNotes(results))
+      if (results[0]) res.json(hydrateNotes(results)[0])
       else next()
     })
     .catch(next)
@@ -143,8 +143,13 @@ router.post(`/`, (req, res, next) => {
     .insert(newItem, `id`)
     .then(([id]) => {
       noteId = id
-      const tagsInsert = tags.map(tagId => ({ note_id: noteId, tag_id: tagId }))
-      return knex(`notes_tags`).insert(tagsInsert)
+      if (tags) {
+        const tagsInsert = tags.map(tagId => ({
+          note_id: noteId,
+          tag_id: tagId,
+        }))
+        return knex(`notes_tags`).insert(tagsInsert)
+      }
     })
     .then(() => {
       return knex(`notes`)
@@ -167,7 +172,7 @@ router.post(`/`, (req, res, next) => {
         res
           .location(`${req.originalUrl}/${results.id}`)
           .status(201)
-          .json(hydrateNotes(results))
+          .json(hydrateNotes(results)[0])
       } else next()
     })
     .catch(next)
