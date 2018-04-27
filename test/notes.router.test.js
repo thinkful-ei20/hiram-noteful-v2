@@ -221,9 +221,15 @@ describe(`Notes endpoints`, function() {
     it(`should delete an item by id`, function() {
       return chai
         .request(app)
-        .delete(`/api/notes/1005`)
+        .delete(`/api/notes/10005`)
         .then(function(res) {
           expect(res).to.have.status(204)
+          return knex(`notes`)
+            .select()
+            .where(`id`, 10005)
+        })
+        .then(results => {
+          expect(results).to.have.lengthOf(0)
         })
     })
   })
