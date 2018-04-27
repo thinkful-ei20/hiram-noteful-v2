@@ -8,7 +8,7 @@ const join = require(`path`).join
 const expect = chai.expect
 chai.use(chaiHttp)
 
-describe.only(`Tags endpoints`, function() {
+describe(`Tags endpoints`, function() {
   beforeEach(function() {
     return seedData(join(__dirname, `..`, `db`, `setup.pgsql`))
   })
