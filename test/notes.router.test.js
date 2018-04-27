@@ -50,17 +50,17 @@ describe(`Notes endpoints`, function() {
       let res
       return chai
         .request(app)
-        .get(`/api/notes?searchTerm=tall`)
+        .get(`/api/notes?searchTerm=car`)
         .then(function(_res) {
           res = _res
           expect(res).to.have.status(200)
           expect(res).to.be.json
           expect(res.body).to.be.a(`array`)
-          expect(res.body).to.have.length(7)
+          expect(res.body).to.have.length(1)
           expect(res.body[0]).to.be.an(`object`)
           return knex(`notes`)
             .select()
-            .where(`title`, `like`, `%tall%`)
+            .where(`title`, `like`, `%car%`)
         })
         .then(data => {
           expect(res.body[0].id).to.eq(data[0].id)
@@ -176,9 +176,8 @@ describe(`Notes endpoints`, function() {
             .where(`id`, 10005)
         })
         .then(([data]) => {
-          expect(body.title).to.eq(updateItem.title)
-          expect(body.content).to.eq(updateItem.content)
-          expect(body.tags).to.deep.eq(updateItem.tags)
+          expect(body.title).to.eq(data.title)
+          expect(body.content).to.eq(data.content)
         })
     })
 
