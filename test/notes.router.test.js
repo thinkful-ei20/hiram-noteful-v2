@@ -86,17 +86,19 @@ describe(`Notes endpoints`, function() {
 
   describe(`GET /api/notes/:id`, function() {
     it(`should return correct notes`, function() {
-      return chai
-        .request(app)
-        .get(`/api/notes/10000`)
-        .then(function(res) {
-          expect(res).to.have.status(200)
-          expect(res).to.be.json
-          expect(res.body).to.be.an(`object`)
-          expect(res.body).to.include.keys(`id`, `title`, `content`)
-          expect(res.body.id).to.equal(10000)
-          expect(res.body.title).to.equal(`bookish`)
-        })
+      const dataPromise = knex(`notes`)
+        .first()
+        .where(`id`, 10000)
+      const apiPromise = chai.request(app).get(`/api/notes/10000`)
+
+      return Promise.all([dataPromise, apiPromise]).then(function([data, res]) {
+        expect(res).to.have.status(200)
+        expect(res).to.be.json
+        expect(res.body).to.be.an(`object`)
+        expect(res.body).to.include.keys(`id`, `title`, `content`)
+        expect(res.body.id).to.equal(10000)
+        expect(res.body.title).to.equal(data.title)
+      })
     })
 
     it(`should respond with a 404 for an invalid id`, function() {
@@ -114,20 +116,27 @@ describe(`Notes endpoints`, function() {
       const newItem = {
         title: `The best article about cats ever!`,
         content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor...`,
+        tags: [],
       }
+      let body
       return chai
         .request(app)
         .post(`/api/notes`)
         .send(newItem)
         .then(function(res) {
+          body = res.body
           expect(res).to.have.status(201)
           expect(res).to.be.json
           expect(res.body).to.be.a(`object`)
           expect(res.body).to.include.keys(`id`, `title`, `content`)
-
-          expect(res.body.title).to.equal(newItem.title)
-          expect(res.body.content).to.equal(newItem.content)
           expect(res).to.have.header(`location`)
+          return knex(`notes`)
+            .select()
+            .where(`id`, body.id)
+        })
+        .then(([data]) => {
+          expect(body.title).to.eq(data.title)
+          expect(body.content).to.eq(data.content)
         })
     })
 
