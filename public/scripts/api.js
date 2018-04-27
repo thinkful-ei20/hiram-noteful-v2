@@ -1,53 +1,53 @@
 /* global $ */
-'use strict';
+"use strict"
 
-const api = (function () {
+const api = (function() {
   const search = function(path, query) {
     return $.ajax({
-      type: 'GET',
+      type: `GET`,
       url: path,
-      dataType: 'json',
-      data: query
-    });
-  };
+      dataType: `json`,
+      data: query,
+    })
+  }
   const details = function(path) {
     return $.ajax({
-      type: 'GET',
-      dataType: 'json',
+      type: `GET`,
+      dataType: `json`,
       url: path,
-    });
-  };
+    })
+  }
   const update = function(path, obj) {
     return $.ajax({
-      type: 'PUT',
+      type: `PUT`,
       url: path,
-      contentType: 'application/json',
-      dataType: 'json',
-      data: JSON.stringify(obj)
-    });
-  };
+      contentType: `application/json`,
+      dataType: `json`,
+      data: JSON.stringify(obj),
+    })
+  }
   const create = function(path, obj) {
     return $.ajax({
-      type: 'POST',
+      type: `POST`,
       url: path,
-      contentType: 'application/json',
-      dataType: 'json',
-      processData:false,
-      data: JSON.stringify(obj)
-    });
-  };
+      contentType: `application/json`,
+      dataType: `json`,
+      processData: false,
+      data: JSON.stringify(obj),
+    })
+  }
   const remove = function(path) {
     return $.ajax({
-      type: 'DELETE',
-      dataType: 'json',
+      type: `DELETE`,
+      dataType: `json`,
       url: path,
-    });
-  };
+    })
+  }
   return {
     create,
     search,
     details,
     update,
-    remove
-  };
-}());
+    remove,
+  }
+})()
