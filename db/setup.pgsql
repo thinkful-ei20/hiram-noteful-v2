@@ -37,16 +37,16 @@ insert into folders (name) VALUES
   ('Work');
 
 insert into notes (title, content, folder_id) VALUES
-  ('bookish', 'hot', 1001),
-  ('glasses', 'hotter', 1002),
-  ('tall', 'hotter still', 1000),
-  ('tall6', 'hotter still', 1003),
-  ('tall5', 'hotter still', 1002),
-  ('tall4', 'hotter still', 1001),
-  ('tall1', 'hotter still', 1002),
-  ('tall3', 'hotter still', 1003),
-  ('tall2', 'hotter still', 1003),
-  ('ginger', 'on fire', 1001);
+  ('train', 'cool', 1001),
+  ('airplane', 'cooler', 1002),
+  ('car', 'cooler still', 1000),
+  ('cooler', 'bad guy', 1003),
+  ('king cold', 'coolers dad', 1002),
+  ('snow cone', 'shaved ice', 1001),
+  ('conehead', 'funny', 1002),
+  ('americas funneist home videos', 'old', 1003),
+  ('old', 'young', 1003),
+  ('word association', 'is stupid', 1001);
 
 insert into tags (name) VALUES
   ('shopping'),
